@@ -341,7 +341,8 @@ def is_complete(car):
 
 def send_to_telegram(car, caption):
     token = os.environ["TELEGRAM_BOT_TOKEN"].strip()
-    chat = os.environ["TELEGRAM_CHANNEL"].strip()
+    chat = re.sub(r"^(https?://)?(www\.)?(t\.me|telegram\.me)/", "", os.environ["TELEGRAM_CHANNEL"].strip()).strip("/ ")
+    if not chat.startswith("@") and not re.fullmatch(r"-?\d+", chat): chat = "@" + chat
     api = f"https://api.telegram.org/bot{token}"
 
     files, media = {}, []
