@@ -1,0 +1,43 @@
+name: Полезный пост про импорт
+
+on:
+  schedule:
+    - cron: "57 8 * * *"    # ~14:00 по Уфе
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Тестовый запуск: только показать пост, в канал не отправлять"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: telegram-post
+  cancel-in-progress: false
+
+jobs:
+  tip:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Установка зависимостей
+        run: pip install -r requirements.txt
+      - name: Публикация
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL: "@azievavto"
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && '1' || '' }}
+        run: python tips.py
+      - name: Запомнить опубликованное
+        if: always()
+        run: |
+          git config user.name "azievavto-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add posted.json
+          git diff --cached --quiet || (git commit -m "Опубликован полезный пост" && git pull --rebase && git push)
