@@ -262,7 +262,7 @@ def build_caption(car):
     # из «2021 280TSI DSG 2WD Connected» убираем год, он и так в заголовке
     if year and trim.startswith(str(year)):
         trim = trim[len(str(year)):].strip()
-    head = f"{title} {trim}".strip()
+    head = f"{title} {trim[len(title.split()[-1]):].strip() if trim.split()[:1] == title.split()[-1:] else trim}".strip()
     if year:
         head += f", {year}"
 
