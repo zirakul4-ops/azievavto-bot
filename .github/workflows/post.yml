@@ -14,6 +14,10 @@ on:
         description: "Тестовый запуск: только показать пост, в канал не отправлять"
         type: boolean
         default: true
+      count:
+        description: "Сколько постов опубликовать за этот запуск"
+        type: number
+        default: 1
 
 permissions:
   contents: write
@@ -45,7 +49,12 @@ jobs:
           MIN_PRICE: ${{ vars.MIN_PRICE }}
           MIN_YEAR: ${{ vars.MIN_YEAR }}
           BRANDS: ${{ vars.BRANDS }}
-        run: python bot.py
+        run: |
+          N="${{ inputs.count || 1 }}"
+          for i in $(seq 1 "$N"); do
+            python bot.py || exit 1
+            if [ "$i" -lt "$N" ]; then sleep 20; fi
+          done
 
       - name: Запомнить опубликованное
         if: always()
