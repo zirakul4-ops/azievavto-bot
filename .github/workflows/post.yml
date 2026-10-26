@@ -39,7 +39,7 @@ jobs:
       - name: Публикация
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
+          TELEGRAM_CHANNEL: "@azievavto"
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && '1' || '' }}
           MAX_PRICE: ${{ vars.MAX_PRICE }}
           MIN_PRICE: ${{ vars.MIN_PRICE }}
