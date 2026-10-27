@@ -27,7 +27,7 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 
-from vk import post_to_vk
+from carpage import queue_for_vk
 
 SITE = "https://avexavto.ru"
 CATALOG_URL = SITE + "/catalog"
@@ -232,9 +232,9 @@ def extract_photos(soup):
 
 
 def download_photo(url):
-    """Пытаемся взять крупную версию (/1280), если сервер её не отдаёт — исходную."""
+    """Пытаемся взять крупную версию (/960), если сервер её не отдаёт — исходную."""
     candidates = []
-    big = re.sub(r"/(\d{3,4})(\?.*)?$", "/1280", url)
+    big = re.sub(r"/(\d{3,4})(\?.*)?$", "/960", url)
     if big != url:
         candidates.append(big)
     candidates.append(url)
@@ -382,7 +382,7 @@ def send_to_telegram(car, caption):
     res = r.json()["result"]
     msg_id = (res[0] if isinstance(res, list) else res)["message_id"]
     link = f"https://t.me/{chat[1:]}/{msg_id}" if chat.startswith("@") else None
-    post_to_vk(caption, link)
+    queue_for_vk(car, caption, link)
     return True
 
 
