@@ -28,8 +28,6 @@ def post_to_vk(text, link=None):
         message += f"\n\n👉 Фото и подробности в Telegram: {link}"
     data = {"owner_id": f"-{group}", "from_group": 1, "message": message,
             "access_token": token, "v": "5.199"}
-    if link:
-        data["attachments"] = link
     try:
         r = requests.post("https://api.vk.com/method/wall.post", data=data, timeout=30)
         j = r.json()
