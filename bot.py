@@ -323,12 +323,15 @@ def passes_filters(car):
         return int(re.sub(r"\D", "", v)) if re.search(r"\d", v) else None
 
     max_p, min_p, min_y = env_int("MAX_PRICE"), env_int("MIN_PRICE"), env_int("MIN_YEAR")
+    max_km = env_int("MAX_MILEAGE")
     brands = [x.strip().lower() for x in os.getenv("BRANDS", "").split(",") if x.strip()]
     if max_p and car["total"] > max_p:
         return False
     if min_p and car["total"] < min_p:
         return False
     if min_y and (car.get("year") or 0) < min_y:
+        return False
+    if max_km and (car.get("mileage") is None or car["mileage"] > max_km):
         return False
     if brands and not any((car.get("name") or "").lower().startswith(br) for br in brands):
         return False
