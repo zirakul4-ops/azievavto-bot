@@ -311,7 +311,7 @@ def build_caption(car):
     lines += ["", "✅ Подбор, проверка, доставка, растаможка и оформление — всё берём на себя"]
     if car.get("rate_date"):
         lines.append(f"📅 Расчёт по курсу ЦБ на {car['rate_date']}")
-    lines += ["", f"📞 Расчёт и бронь: {PHONE}, Булат", f"🌐 {WEBSITE}"]
+    lines += ["", f"📞 Расчёт и бронь: {PHONE}, Булат", f"🌐 <b>{WEBSITE.upper()}</b>"]
     return "\n".join(lines)
 
 
