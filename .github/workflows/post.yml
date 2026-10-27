@@ -42,6 +42,7 @@ jobs:
           VK_TOKEN: ${{ secrets.VK_TOKEN }}
           VK_GROUP_ID: "77264988"
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && '1' || '' }}
+          MAX_MILEAGE: "60000"
           MAX_PRICE: ${{ vars.MAX_PRICE }}
           MIN_PRICE: ${{ vars.MIN_PRICE }}
           MIN_YEAR: ${{ vars.MIN_YEAR }}
