@@ -23,8 +23,14 @@ import requests
 QUEUE = Path(__file__).with_name("vk_queue.json")
 
 
+VK_CTA = "🔔 Подписывайтесь на группу, чтобы первыми видеть новые авто из Китая и Кореи!"
+
+
 def to_plain(text):
-    return html.unescape(re.sub(r"</?b>", "", text))
+    """Текст для ВК: без HTML и без призыва подписаться на Telegram-канал."""
+    text = html.unescape(re.sub(r"</?b>", "", text))
+    lines = [l for l in text.split("\n") if not l.startswith("🔔")]
+    return "\n".join(lines).rstrip()
 
 
 def _creds():
@@ -50,6 +56,7 @@ def post_to_vk(text, link=None):
     message = to_plain(text)
     if link:
         message += f"\n\n👉 Фото и подробности в Telegram: {link}"
+    message += f"\n\n{VK_CTA}"
     try:
         j = _wall_post(message)
         if "error" in j:
@@ -89,6 +96,7 @@ def flush():
         message = to_plain(item["text"])
         if tg:
             message += f"\n\n👉 Все фото и подробности: {tg}"
+        message += f"\n\n{VK_CTA}"
         try:
             pages_ok = os.getenv("PAGES_OK", "true").strip().lower() == "true"
             ready = wait_for_page(page) if (page and pages_ok) else False
