@@ -27,6 +27,8 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 
+from vk import post_to_vk
+
 SITE = "https://avexavto.ru"
 CATALOG_URL = SITE + "/catalog"
 MAX_CATALOG_PAGES = 10
@@ -377,6 +379,10 @@ def send_to_telegram(car, caption):
             # ошибка настройки, а не машины — продолжать бессмысленно
             sys.exit("Проверьте TELEGRAM_BOT_TOKEN, TELEGRAM_CHANNEL и что бот — администратор канала.")
         return False
+    res = r.json()["result"]
+    msg_id = (res[0] if isinstance(res, list) else res)["message_id"]
+    link = f"https://t.me/{chat[1:]}/{msg_id}" if chat.startswith("@") else None
+    post_to_vk(caption, link)
     return True
 
 
