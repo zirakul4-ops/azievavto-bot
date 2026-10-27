@@ -28,6 +28,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from carpage import queue_for_vk
+from photos import pick as pick_photos
 
 SITE = "https://avexavto.ru"
 CATALOG_URL = SITE + "/catalog"
@@ -207,6 +208,8 @@ def extract_photos(soup):
     """Ссылки на фото из карточки, без повторов, по возможности в лучшем размере."""
     photos, seen = [], set()
     for img in soup.find_all("img"):
+        if img.find_parent("a", href=re.compile(r"/cars/")):
+            continue  # превью «похожих предложений» — это другие машины
         src = img.get("src") or img.get("data-src") or ""
         best = src
         srcset = img.get("srcset") or ""
@@ -228,7 +231,7 @@ def extract_photos(soup):
             continue
         seen.add(mid)
         photos.append(urljoin(SITE, best))
-    return photos[:MAX_PHOTOS]
+    return photos[:20]  # вся галерея; 5 лучших выбирает photos.pick
 
 
 def download_photo(url):
@@ -438,6 +441,7 @@ def main():
                 state["posted"] = sorted(posted)
                 continue
 
+            car["photos"] = pick_photos(car["photos"], HEADERS, log)
             caption = build_caption(car)
             log("\n" + "=" * 40 + "\n" + caption + "\n" + "=" * 40)
             log(f"Фото: {len(car['photos'])}")
