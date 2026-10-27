@@ -14,7 +14,7 @@ import requests
 from vk import post_to_vk
 
 STATE_FILE = Path(__file__).with_name("posted.json")
-FOOTER = "\n\n📞 Консультация и расчёт: +7 987 253 63 93, Булат\n🌐 azievavto.ru"
+FOOTER = "\n\n📞 Консультация и расчёт: +7 987 253 63 93, Булат\n🌐 <b>AZIEVAVTO.RU</b>"
 
 TIPS = [
 """🚗 <b>Как мы привозим автомобиль из Китая: 5 шагов</b>
