@@ -9,9 +9,12 @@
 """
 
 import html
+import io
 import json
 import re
 from pathlib import Path
+
+import requests
 
 PAGES_BASE = "https://zirakul4-ops.github.io/azievavto-bot"
 ROOT = Path(__file__).parent
@@ -23,6 +26,22 @@ PHONE = "+7 987 253 63 93"
 def big_photo(url):
     # сайт партнёров отдаёт размеры 480 и 960 (фактически 720×540)
     return re.sub(r"/(\d{3,4})(\?.*)?$", "/960", url)
+
+
+def save_cover(photo_url, path):
+    """ВК не принимает WebP для карточки — сохраняем обложку в JPG рядом со страницей."""
+    try:
+        from PIL import Image
+        r = requests.get(photo_url, timeout=30, headers={"User-Agent": "Mozilla/5.0"})
+        r.raise_for_status()
+        img = Image.open(io.BytesIO(r.content)).convert("RGB")
+        if img.width < 1080:
+            img = img.resize((1080, round(img.height * 1080 / img.width)), Image.LANCZOS)
+        img.save(path, "JPEG", quality=88)
+        return img.width, img.height
+    except Exception as e:
+        print(f"  обложка не сохранена ({e})")
+        return None
 
 
 def plain(text):
@@ -41,6 +60,12 @@ def make_page(car, caption, tg_link):
     body = "\n".join(f"<p>{e(l)}</p>" if l.strip() else "" for l in lines[1:])
     imgs = "\n".join(f'<img src="{e(u)}" alt="{e(title)}" loading="lazy">' for u in photos)
     url = f"{PAGES_BASE}/cars/{lot}.html"
+    (DOCS / "cars").mkdir(parents=True, exist_ok=True)
+    cover, size = (photos[0] if photos else ""), (720, 540)
+    if photos:
+        got = save_cover(photos[0], DOCS / "cars" / f"{lot}.jpg")
+        if got:
+            cover, size = f"{PAGES_BASE}/cars/{lot}.jpg", got
     page = f"""<!doctype html>
 <html lang="ru"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -50,8 +75,8 @@ def make_page(car, caption, tg_link):
 <meta property="og:title" content="{e(og_title)}">
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{e(url)}">
-{f'<meta property="og:image" content="{e(photos[0])}">' if photos else ''}
-<meta property="og:image:width" content="720"><meta property="og:image:height" content="540">
+{f'<meta property="og:image" content="{e(cover)}"><meta property="og:image:type" content="image/jpeg">' if cover else ''}
+<meta property="og:image:width" content="{size[0]}"><meta property="og:image:height" content="{size[1]}">
 <style>
 body{{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#111317;color:#f5f6f8}}
 main{{max-width:760px;margin:0 auto;padding:16px}}
