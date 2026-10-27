@@ -35,10 +35,14 @@ def save_cover(photo_url, path):
         r = requests.get(photo_url, timeout=30, headers={"User-Agent": "Mozilla/5.0"})
         r.raise_for_status()
         img = Image.open(io.BytesIO(r.content)).convert("RGB")
-        if img.width < 1080:
-            img = img.resize((1080, round(img.height * 1080 / img.width)), Image.LANCZOS)
+        # стандартный формат карточки ссылки: 1200×630 (обрезка по центру)
+        W, H = 1200, 630
+        scale = max(W / img.width, H / img.height)
+        img = img.resize((round(img.width * scale), round(img.height * scale)), Image.LANCZOS)
+        left, top = (img.width - W) // 2, (img.height - H) // 2
+        img = img.crop((left, top, left + W, top + H))
         img.save(path, "JPEG", quality=88)
-        return img.width, img.height
+        return W, H
     except Exception as e:
         print(f"  обложка не сохранена ({e})")
         return None
