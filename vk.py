@@ -95,6 +95,7 @@ def flush():
             j = _wall_post(message, page if ready else None)
             if "error" in j and ready:
                 print(f"  ВК: карточка не принята ({j['error'].get('error_msg')}), публикую без неё")
+                ready = False
                 j = _wall_post(message)
             if "error" in j:
                 print(f"  ВК: ошибка {j['error'].get('error_code')}: {j['error'].get('error_msg')}")
