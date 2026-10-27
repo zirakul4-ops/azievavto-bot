@@ -90,7 +90,8 @@ def flush():
         if tg:
             message += f"\n\n👉 Все фото и подробности: {tg}"
         try:
-            ready = wait_for_page(page) if page else False
+            pages_ok = os.getenv("PAGES_OK", "true").strip().lower() == "true"
+            ready = wait_for_page(page) if (page and pages_ok) else False
             j = _wall_post(message, page if ready else None)
             if "error" in j and ready:
                 print(f"  ВК: карточка не принята ({j['error'].get('error_msg')}), публикую без неё")
