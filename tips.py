@@ -11,6 +11,8 @@ from pathlib import Path
 
 import requests
 
+from vk import post_to_vk
+
 STATE_FILE = Path(__file__).with_name("posted.json")
 FOOTER = "\n\n📞 Консультация и расчёт: +7 987 253 63 93, Булат\n🌐 azievavto.ru"
 
@@ -304,6 +306,8 @@ def main():
                             "disable_web_page_preview": "true"}, timeout=60)
     if not r.ok or not r.json().get("ok"):
         sys.exit(f"Telegram ответил ошибкой: {r.status_code} {r.text[:500]}")
+    msg_id = r.json()["result"]["message_id"]
+    post_to_vk(text, f"https://t.me/{chat[1:]}/{msg_id}" if chat.startswith("@") else None)
 
     state["tip_index"] = i + 1
     STATE_FILE.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
