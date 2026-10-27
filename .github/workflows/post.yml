@@ -78,7 +78,8 @@ jobs:
       - uses: actions/deploy-pages@v4
 
   vk:
-    needs: pages
+    needs: [post, pages]
+    if: ${{ always() && needs.post.result == 'success' && !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -93,6 +94,7 @@ jobs:
         env:
           VK_TOKEN: ${{ secrets.VK_TOKEN }}
           VK_GROUP_ID: "77264988"
+          PAGES_OK: ${{ needs.pages.result == 'success' }}
         run: python vk.py flush
       - name: Сохранить очередь ВК
         if: always()
