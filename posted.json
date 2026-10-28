@@ -24,21 +24,14 @@
     "60212160",
     "60214603",
     "60224715",
+    "60225917",
     "60230440",
     "60251366"
   ],
   "today": {
-    "date": "2026-10-27",
+    "date": "2026-10-28",
     "brands": [
-      "mercedes-benz",
-      "audi",
-      "volkswagen",
-      "bmw",
-      "toyota",
-      "mazda",
-      "chery",
-      "hyundai",
-      "volvo"
+      "bmw"
     ]
   },
   "tip_index": 1
