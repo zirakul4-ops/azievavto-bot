@@ -39,13 +39,15 @@
     "60251366",
     "60273207",
     "60323665",
+    "60346186",
     "60353854"
   ],
   "today": {
     "date": "2026-10-30",
     "brands": [
       "nissan",
-      "volkswagen"
+      "volkswagen",
+      "toyota"
     ]
   },
   "tip_index": 4
