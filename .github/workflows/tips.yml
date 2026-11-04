@@ -1,6 +1,9 @@
 name: Полезный пост про импорт
 
 on:
+  schedule:
+    # 1 полезный пост в день по Уфе (UTC+5): ~08:00
+    - cron: "57 2 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
