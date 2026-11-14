@@ -128,17 +128,13 @@
     "60425516",
     "60427297",
     "60434410",
-    "60453398"
+    "60453398",
+    "60512087"
   ],
   "today": {
-    "date": "2026-11-14",
+    "date": "2026-11-15",
     "brands": [
-      "volkswagen",
-      "toyota",
-      "audi",
-      "bmw",
-      "mazda",
-      "nissan"
+      "volkswagen"
     ]
   },
   "tip_index": 20
